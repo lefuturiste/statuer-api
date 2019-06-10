@@ -1,0 +1,43 @@
+GET {{baseUrl}}/namespace/89ae9f7a-80fb-48de-9bcc-8a9ce9309a63
+Accept: application/json
+
+###
+
+GET {{baseUrl}}/namespace
+
+###
+
+POST http://localhost:8080/namespace
+Content-Type: application/json
+
+{
+  "name": "Hello this is a new namespace!"
+}
+
+###
+
+PUT http://localhost:8080/namespace/80fc1c2b-6d22-46b6-9588-392906c00a0d
+Content-Type: application/json
+
+{
+  "name": "Hello this is a new NENEN?NENENENNENEN namespace!"
+}
+
+###
+
+DELETE http://localhost:8080/namespace/89ae9f7a-80fb-48de-9bcc-8a9ce9309a63
+
+###
+
+
+GET {{baseUrl}}/query/myname.myservice
+
+###
+
+GET {{baseUrl}}/query/thingmill
+
+###
+
+DELETE {{baseUrl}}/query/thingmill.dsdsq.qdsdsq
+
+###
