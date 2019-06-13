@@ -28,7 +28,7 @@ public class Notifier {
             if (status.equals("up")) {
                 Duration duration = Duration.between(Instant.now(), service.getLastDownAt()).abs();
                 long s = duration.getSeconds();
-                extra += " With an estimanted down time of " + String.format("%d:%02d:%02d", s/3600, (s%3600)/60, (s%60));
+                extra += " With an estimated down time of " + String.format("%d:%02d:%02d", s/3600, (s%3600)/60, (s%60));
             }
             Request request = new Request.Builder()
                     .method("POST", RequestBody.create(

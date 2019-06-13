@@ -1,10 +1,6 @@
 package fr.lefuturiste.statuer.stores;
 
-import fr.lefuturiste.statuer.HibernateService;
 import fr.lefuturiste.statuer.models.Namespace;
-import org.json.JSONObject;
-import spark.Response;
-
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.util.List;

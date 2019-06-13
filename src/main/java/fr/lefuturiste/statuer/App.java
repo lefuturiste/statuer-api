@@ -1,26 +1,21 @@
 package fr.lefuturiste.statuer;
 
-import com.mrpowergamerbr.temmiewebhook.DiscordMessage;
-import com.mrpowergamerbr.temmiewebhook.TemmieWebhook;
 import fr.lefuturiste.statuer.controllers.NamespaceController;
 import fr.lefuturiste.statuer.controllers.ProjectController;
 import fr.lefuturiste.statuer.controllers.QueryController;
 import fr.lefuturiste.statuer.controllers.ServiceController;
-import fr.lefuturiste.statuer.models.Service;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 import org.json.JSONObject;
 import spark.Response;
 import spark.Spark;
 
-import java.io.IOException;
+import java.time.Instant;
 
 public class App {
     private static CheckThread checkThread;
 
     public static void main(String[] args) {
+        System.setProperty("user.timezone", "Europe/Paris");
+//        new OnStart().run();
         checkThread = new CheckThread();
         Spark.port(8080);
         Spark.get("/", (req, res) -> {

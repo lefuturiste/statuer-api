@@ -7,6 +7,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "Service")
 public class Service {
@@ -44,6 +46,14 @@ public class Service {
 
     @ManyToOne
     private Project project;
+
+    @OneToMany(mappedBy = "service", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Incident> incidents = new ArrayList<>();
+
+    @OneToOne
+    private Incident lastIncident;
+
+    private float uptime;
 
     public String getId() {
         return id;
@@ -161,5 +171,25 @@ public class Service {
 
     public void setLastDownAt(Instant lastDownAt) {
         this.lastDownAt = lastDownAt;
+    }
+
+    public List<Incident> getIncidents() {
+        return incidents;
+    }
+
+    public Incident getLastIncident() {
+        return lastIncident;
+    }
+
+    public void setLastIncident(Incident lastIncident) {
+        this.lastIncident = lastIncident;
+    }
+
+    public float getUptime() {
+        return uptime;
+    }
+
+    public void setUptime(float uptime) {
+        this.uptime = uptime;
     }
 }

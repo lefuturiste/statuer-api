@@ -15,6 +15,7 @@
         <mapping class="fr.lefuturiste.statuer.models.Namespace" />
         <mapping class="fr.lefuturiste.statuer.models.Project" />
         <mapping class="fr.lefuturiste.statuer.models.Service" />
+        <mapping class="fr.lefuturiste.statuer.models.Incident" />
     </session-factory>
 
 </hibernate-configuration>
