@@ -1,0 +1,13 @@
+query {
+    Service(id:"ae5eb5d1-ee0b-4d77-b081-ce7704f8baa7") {
+        id,
+        name,
+        url,
+        checkPeriod,
+        incidents {
+            id,
+            startedAt,
+            finishedAt
+        }
+    }
+}

@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
-import java.time.ZoneId;
+import java.util.Date;
 
 @Entity(name = "Incident")
 public class Incident {
@@ -20,9 +20,9 @@ public class Incident {
     private String impact; // 'high' or 'low'
 
     @NotNull
-    private Instant startedAt;
+    private Date startedAt;
 
-    private Instant finishedAt;
+    private Date finishedAt;
 
     @ManyToOne
     private Service service;
@@ -59,19 +59,19 @@ public class Incident {
         this.impact = impact;
     }
 
-    public Instant getStartedAt() {
+    public Date getStartedAt() {
         return startedAt;
     }
 
-    public void setStartedAt(Instant startedAt) {
+    public void setStartedAt(Date startedAt) {
         this.startedAt = startedAt;
     }
 
-    public Instant getFinishedAt() {
+    public Date getFinishedAt() {
         return finishedAt;
     }
 
-    public void setFinishedAt(Instant finishedAt) {
+    public void setFinishedAt(Date finishedAt) {
         this.finishedAt = finishedAt;
     }
 

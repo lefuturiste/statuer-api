@@ -26,16 +26,16 @@ public class Notifier {
             String status = service.getAvailable() ? "up": "down";
             String extra = "";
             if (status.equals("up")) {
-                Duration duration = Duration.between(Instant.now(), service.getLastDownAt()).abs();
+                Duration duration = Duration.between(Instant.now(), service.getLastDownAt().toInstant()).abs();
                 long s = duration.getSeconds();
                 extra += " With an estimated down time of " + String.format("%d:%02d:%02d", s/3600, (s%3600)/60, (s%60));
             }
             Request request = new Request.Builder()
                     .method("POST", RequestBody.create(
+                            MediaType.get("application/json; charset=utf-8"),
                             new JSONObject()
                                     .put("content", service.getPath() + " is now " + status + " !" + extra)
-                                    .toString(0),
-                            MediaType.get("application/json; charset=utf-8")))
+                                    .toString(0)))
                     .url(discordWebhook).build();
             try {
                 httpClient.newCall(request).execute();

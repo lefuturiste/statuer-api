@@ -1,13 +1,14 @@
 package fr.lefuturiste.statuer.models;
 
+import com.introproventures.graphql.jpa.query.annotation.GraphQLDescription;
 import org.hibernate.validator.constraints.URL;
 import org.json.JSONObject;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity(name = "Service")
@@ -24,25 +25,22 @@ public class Service {
     @URL
     private String discordWebhook;
 
-    private Boolean isAvailable = false;
+    private String status;
 
-    @Column(columnDefinition = "120")
-    private int checkPeriod = 120; // in seconds (60,120,180,240,300,420,600,900,1800,3600)
+    private Integer checkPeriod = 120; // in seconds (60,120,180,240,300,420,600,900,1800,3600)
 
-    @Column(columnDefinition = "200")
-    private int httpExpectedStatus = 200; // 200|400
+    private Integer httpExpectedStatus = 200; // 200|400
 
     @URL
-    @NotEmpty
     private String url;
 
     private String type; // http/socket
 
     private int timeout; // in seconds
 
-    private Instant lastCheckAt;
+    private Date lastCheckAt;
 
-    private Instant lastDownAt;
+    private Date lastDownAt;
 
     @ManyToOne
     private Project project;
@@ -85,7 +83,8 @@ public class Service {
         jsonObject.put("name", name);
         jsonObject.put("url", url);
         jsonObject.put("type", type);
-        jsonObject.put("is_available", isAvailable);
+        jsonObject.put("is_available", getAvailable());
+        jsonObject.put("status", status);
         jsonObject.put("check_period", checkPeriod);
         jsonObject.put("http_expected_status", httpExpectedStatus);
         jsonObject.put("discord_webhook", discordWebhook);
@@ -138,11 +137,19 @@ public class Service {
     }
 
     public Boolean getAvailable() {
-        return isAvailable;
+        return (status == null) ? null : status.equals("up");
     }
 
     public void setAvailable(Boolean available) {
-        isAvailable = available;
+        status = available ? "up": "down";
+    }
+
+    public void setStatus(String status) {
+        status = status;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public String getDiscordWebhook() {
@@ -153,11 +160,11 @@ public class Service {
         this.discordWebhook = discordWebhook;
     }
 
-    public Instant getLastCheckAt() {
+    public Date getLastCheckAt() {
         return lastCheckAt;
     }
 
-    public void setLastCheckAt(Instant lastCheckAt) {
+    public void setLastCheckAt(Date lastCheckAt) {
         this.lastCheckAt = lastCheckAt;
     }
 
@@ -165,11 +172,11 @@ public class Service {
         return this.project.getNamespace().getName() + "." + this.project.getName() + "." + this.name;
     }
 
-    public Instant getLastDownAt() {
+    public Date getLastDownAt() {
         return lastDownAt;
     }
 
-    public void setLastDownAt(Instant lastDownAt) {
+    public void setLastDownAt(Date lastDownAt) {
         this.lastDownAt = lastDownAt;
     }
 

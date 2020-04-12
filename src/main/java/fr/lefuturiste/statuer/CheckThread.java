@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,11 +41,14 @@ public class CheckThread implements Runnable {
                 System.out.println("Checking service " + service.getName());
                 // if the time between now and last checket at is more or equal than the time of check_period go check it
                 Duration durationSinceLastCheck = Duration.between(
-                        service.getLastCheckAt() != null ? service.getLastCheckAt() : Instant.now().minus(Duration.ofSeconds(service.getCheckPeriod())),
+                        service.getLastCheckAt() != null ? service.getLastCheckAt().toInstant() : Instant.now().minus(Duration.ofSeconds(service.getCheckPeriod())),
                         Instant.now());
                 if (durationSinceLastCheck.getSeconds() >= service.getCheckPeriod()) {
                     System.out.println("    This service was not checked since: " + durationSinceLastCheck.getSeconds());
                     System.out.println("    Now checking: " + service.getName());
+                    if (service.getUrl() == null || service.getUrl().equals("")) {
+                        break;
+                    }
                     boolean isAvailable = Checker.isAvailable(service);
                     System.out.println("    Service available: " + isAvailable);
                     if ((service.getAvailable() != null && service.getAvailable() != isAvailable) || (service.getAvailable() == null && !isAvailable)) {
@@ -53,7 +57,7 @@ public class CheckThread implements Runnable {
                         if (!isAvailable) {
                             System.out.println("    Status changed to DOWN");
                             // status as changed as DOWN
-                            Instant downInstant = Instant.now();
+                            Date downInstant = Date.from(Instant.now());
                             service.setLastDownAt(downInstant);
                             // we can create a incident
                             Incident incident = new Incident();
@@ -67,7 +71,7 @@ public class CheckThread implements Runnable {
                             // status as changed as UP
                             // we can update our incident to indicate the end of the incident
                             Incident lastIncident = service.getLastIncident();
-                            lastIncident.setFinishedAt(Instant.now());
+                            lastIncident.setFinishedAt(Date.from(Instant.now()));
                             // since the incident is finished we can update the down time percentage of this service (last 90d)
                             // fetch all the last 90d incident for this service
                             EntityManager entitymanager = getEntityManager();
@@ -81,10 +85,10 @@ public class CheckThread implements Runnable {
                             List<Incident> incidents = query.getResultList();
                             Duration totalDownDuration = Duration.ofSeconds(0);
                             for (Incident incident : incidents) {
-                                if (incident.getStartedAt().isBefore(startOfRange)) {
-                                    totalDownDuration = totalDownDuration.plus(Duration.between(startOfRange, incident.getFinishedAt()));
+                                if (incident.getStartedAt().toInstant().isBefore(startOfRange)) {
+                                    totalDownDuration = totalDownDuration.plus(Duration.between(startOfRange, incident.getFinishedAt().toInstant()));
                                 } else {
-                                    totalDownDuration = totalDownDuration.plus(Duration.between(incident.getStartedAt(), incident.getFinishedAt()));
+                                    totalDownDuration = totalDownDuration.plus(Duration.between(incident.getStartedAt().toInstant(), incident.getFinishedAt().toInstant()));
                                 }
                             }
                             Duration rangeDuration = Duration.between(startOfRange, endOfRange);
@@ -97,7 +101,7 @@ public class CheckThread implements Runnable {
                         // we can now notify of the incident (updated or created)
                         Notifier.notify(service);
                     }
-                    service.setLastCheckAt(Instant.now());
+                    service.setLastCheckAt(Date.from(Instant.now()));
                     ServiceStore.persist(service, false);
                 } else {
                     System.out.println("    Already checked");
