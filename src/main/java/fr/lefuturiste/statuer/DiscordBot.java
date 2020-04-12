@@ -1,6 +1,7 @@
 package fr.lefuturiste.statuer;
 
 import fr.lefuturiste.statuer.controllers.DiscordCommandsController;
+import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
@@ -22,10 +23,12 @@ public class DiscordBot {
         //  https://discordapp.com/oauth2/authorize?client_id=INSERT_CLIENT_ID_HERE&scope=bot&permissions=0
 
         try {
-            jda = new JDABuilder(token).build();
-            jda.addEventListener(new EventListener());
+            jda = new JDABuilder(AccountType.BOT)
+                .setToken(token)
+                .addEventListener(new EventListener())
+                .buildBlocking();
             jda.getPresence().setStatus(OnlineStatus.ONLINE);
-        } catch (LoginException e) {
+        } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }
     }

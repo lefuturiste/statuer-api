@@ -146,7 +146,7 @@ public class DiscordCommandsController {
             }
             ProjectStore.persist(objectQueryResult.project);
         } else if (objectQueryResult.namespace != null) {
-            // edit project
+            // edit namespace
             if (parameters.containsKey("name")) {
                 objectQueryResult.namespace.setName(parameters.get("name"));
             }
