@@ -1,6 +1,5 @@
 package fr.lefuturiste.statuer.models;
 
-import com.introproventures.graphql.jpa.query.annotation.GraphQLDescription;
 import org.hibernate.validator.constraints.URL;
 import org.json.JSONObject;
 
@@ -9,7 +8,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity(name = "Service")
@@ -144,7 +142,7 @@ public class Service {
     }
 
     public void setAvailable(Boolean available) {
-        status = available ? "up": "down";
+        status = available ? "up" : "down";
     }
 
     public void setStatus(String newStatus) {

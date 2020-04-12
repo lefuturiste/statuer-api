@@ -5,7 +5,6 @@ import org.json.JSONObject;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
-import java.util.Date;
 
 @Entity(name = "Incident")
 public class Incident {

@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -95,18 +94,19 @@ public class CheckThread implements Runnable {
                             Duration rangeDuration = Duration.between(startOfRange, endOfRange);
                             float percentage = (float) (totalDownDuration.getSeconds() * 100) / rangeDuration.getSeconds();
                             BigDecimal numberBigDecimal = new BigDecimal(percentage);
-                            numberBigDecimal  = numberBigDecimal.setScale(8, RoundingMode.HALF_UP);
+                            numberBigDecimal = numberBigDecimal.setScale(8, RoundingMode.HALF_UP);
                             System.out.println("    Updated uptime to " + numberBigDecimal);
                             service.setUptime(numberBigDecimal.floatValue());
                         }
                         // we can now notify of the incident (updated or created)
                         Notifier.notify(service);
+                        ServiceStore.persist(service, false);
                     }
                     if (service.getAvailable() == null) {
                         service.setAvailable(isAvailable);
+                        ServiceStore.persist(service, false);
                     }
-                    service.setLastCheckAt(Instant.now());
-                    ServiceStore.persist(service, false);
+                    //service.setLastCheckAt(Instant.now());
                 } else {
                     System.out.println("    Already checked");
                 }
