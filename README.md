@@ -24,34 +24,35 @@ Image of the api: `lefuturiste/statuer-api`
 - (optional) `DISCORD_CLIENT_ID`
 - (optional) `DISCORD_PREFIX` default to `??`
 
-## Discord commands
+## Discord bot
 
-prefix: ??|&&|##|mention
+This service can be managed using a discord bot.
 
-commands:
+Example of invite link: `https://discordapp.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&scope=bot&permissions=1611000896`
 
-`??ping`
+Prefix: ??|&&|##|mention
 
-`??help`
+Commands:
 
-`??about`
+- `??ping`
 
-`??status` number of service down now
+- `??help`
 
-`??get <path>` show information about a namespace|project|service
+- `??about`
 
-`??create <path>` create a path
+- `??status` number of service down now
 
-`??edit <path> name=<new name>` edit a path with a new name
+- `??get <path>` show information about a namespace|project|service
 
-`??delete <path>` delete a path
+- `??create <path>` create a path
 
-`??webhook <path> <channel>` set a webhook channel for a path (this will manage auto the webhooks)
+- `??edit <path> name=<new name>` edit a path, you can use any key that you want to edit
 
-`??edit <path> proprety=1 proprety=2`
+- `??edit <path> proprety=1 proprety=2`
 
-- ??last :show the
-- ??get 'path"
+- `??delete <path>` delete a path
+
+- `??webhook <path> <channel>` set a webhook channel for a path (this will manage auto the webhooks)
 
 Discord authorization: restrain a discord bot by channel and by discord user.
 
