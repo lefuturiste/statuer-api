@@ -1,47 +1,49 @@
 package fr.lefuturiste.statuer;
 
-import fr.lefuturiste.statuer.models.Service;
-import okhttp3.*;
-import org.json.JSONObject;
+import fr.lefuturiste.statuer.models.Incident;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.webhook.WebhookClient;
+import net.dv8tion.jda.webhook.WebhookClientBuilder;
 
-import java.io.IOException;
+import java.awt.*;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
-public class Notifier {
-    private static OkHttpClient httpClient = new OkHttpClient();
+class Notifier {
 
-    public static void notify(Service service) {
+    static void notify(Incident incident) {
         // search for a discord webhooks
         String discordWebhook;
-        discordWebhook = service.getDiscordWebhook();
+        discordWebhook = incident.getService().getProject().getNamespace().getDiscordWebhook();
         if (discordWebhook == null) {
-            discordWebhook = service.getProject().getDiscordWebhook();
+            discordWebhook = incident.getService().getProject().getDiscordWebhook();
             if (discordWebhook == null) {
-                discordWebhook = service.getProject().getNamespace().getDiscordWebhook();
+                discordWebhook = incident.getService().getDiscordWebhook();
             }
         }
         if (discordWebhook != null) {
             System.out.println(" We will send a discord webhook");
-            String status = service.getAvailable() ? "up": "down";
-            String extra = "";
+            String status = incident.getService().getAvailable() ? "up": "down";
+            EmbedBuilder embed = new EmbedBuilder();
+            embed
+                    .addField("Incident id", incident.getId(), true)
+                    .addField("Service url", incident.getService().getUrl(), true)
+                    .setDescription(incident.getService().getPath() + " is now " + status + " !" );
             if (status.equals("up")) {
-                Duration duration = Duration.between(Instant.now(), service.getLastDownAt()).abs();
+                embed
+                    .addField("Started at", DateTimeFormatter.ISO_INSTANT.format(incident.getStartedAt()), true)
+                    .setColor(Color.decode("#27ae60")).setTitle("End of an incident!");
+                Duration duration = Duration.between(Instant.now(), incident.getService().getLastDownAt()).abs();
                 long s = duration.getSeconds();
-                extra += " With an estimated down time of " + String.format("%d:%02d:%02d", s/3600, (s%3600)/60, (s%60));
+                embed.addField("Estimated down time", String.format("%d:%02d:%02d", s/3600, (s%3600)/60, (s%60)), true);
+            } else {
+                embed.setColor(Color.decode("#e74c3c")).setTitle("New incident!");
             }
-            Request request = new Request.Builder()
-                    .method("POST", RequestBody.create(
-                            MediaType.get("application/json; charset=utf-8"),
-                            new JSONObject()
-                                    .put("content", service.getPath() + " is now " + status + " !" + extra)
-                                    .toString(0)))
-                    .url(discordWebhook).build();
-            try {
-                httpClient.newCall(request).execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            WebhookClientBuilder builder = new WebhookClientBuilder(discordWebhook);
+            WebhookClient client = builder.build();
+
+            client.send(embed.build()).thenAccept((message) -> System.out.println("Message with embed has been sent"));
         }
     }
 }

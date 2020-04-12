@@ -54,23 +54,24 @@ public class CheckThread implements Runnable {
                     if ((service.getAvailable() != null && service.getAvailable() != isAvailable) || (service.getAvailable() == null && !isAvailable)) {
                         service.setAvailable(isAvailable);
                         // status has changed
+                        Incident lastIncident;
                         if (!isAvailable) {
                             System.out.println("    Status changed to DOWN");
                             // status as changed as DOWN
                             Instant downInstant = Instant.now();
                             service.setLastDownAt(downInstant);
                             // we can create a incident
-                            Incident incident = new Incident();
-                            incident.setId(UUID.randomUUID().toString());
-                            incident.setStartedAt(downInstant);
-                            incident.setService(service);
-                            service.setLastIncident(incident);
-                            IncidentStore.persist(incident, false);
+                            lastIncident = new Incident();
+                            lastIncident.setId(UUID.randomUUID().toString());
+                            lastIncident.setStartedAt(downInstant);
+                            lastIncident.setService(service);
+                            service.setLastIncident(lastIncident);
+                            IncidentStore.persist(lastIncident, false);
                         } else {
                             System.out.println("    Status changed to UP");
                             // status as changed as UP
                             // we can update our incident to indicate the end of the incident
-                            Incident lastIncident = service.getLastIncident();
+                            lastIncident = service.getLastIncident();
                             lastIncident.setFinishedAt(Instant.now());
                             // since the incident is finished we can update the down time percentage of this service (last 90d)
                             // fetch all the last 90d incident for this service
@@ -99,7 +100,7 @@ public class CheckThread implements Runnable {
                             service.setUptime(numberBigDecimal.floatValue());
                         }
                         // we can now notify of the incident (updated or created)
-                        Notifier.notify(service);
+                        Notifier.notify(lastIncident);
                         ServiceStore.persist(service, false);
                     }
                     if (service.getAvailable() == null) {
