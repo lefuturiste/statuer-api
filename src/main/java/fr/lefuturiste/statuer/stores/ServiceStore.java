@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import static fr.lefuturiste.statuer.HibernateService.getEntityManager;
 
-public class ServiceStore {
+public class ServiceStore extends Store {
     public static List<Service> getMany() {
         EntityManager entitymanager = getEntityManager();
         return entitymanager.createQuery("from Service", Service.class).getResultList();
@@ -29,28 +29,6 @@ public class ServiceStore {
         } catch (NoResultException e) {
             return null;
         }
-    }
-
-    public static void persist(Service service) {
-        persist(service, true);
-    }
-
-    public static void persist(Service service, boolean clear) {
-        EntityManager entitymanager = getEntityManager();
-        entitymanager.getTransaction().begin();
-        entitymanager.persist(service);
-        entitymanager.getTransaction().commit();
-        if (clear) {
-            entitymanager.clear();
-        }
-    }
-
-    public static void delete(Service service) {
-        EntityManager entitymanager = getEntityManager();
-        entitymanager.getTransaction().begin();
-        entitymanager.remove(service);
-        entitymanager.getTransaction().commit();
-        entitymanager.clear();
     }
 
     public static Service getOneByNameAndByProject(String name, Project project) {

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import static fr.lefuturiste.statuer.HibernateService.getEntityManager;
 
-public class NamespaceStore {
+public class NamespaceStore extends Store {
     public static List<Namespace> getMany() {
         EntityManager entitymanager = getEntityManager();
         return entitymanager.createQuery("from Namespace", Namespace.class).getResultList();
@@ -36,20 +36,5 @@ public class NamespaceStore {
         } catch (NoResultException e) {
             return null;
         }
-    }
-
-    public static void persist(Namespace namespace) {
-        EntityManager entitymanager = getEntityManager();
-        entitymanager.getTransaction().begin();
-        entitymanager.persist(namespace);
-        entitymanager.getTransaction().commit();
-        entitymanager.clear();
-    }
-
-    public static void delete(Namespace namespace) {
-        EntityManager entitymanager = getEntityManager();
-        entitymanager.getTransaction().begin();
-        entitymanager.remove(namespace);
-        entitymanager.getTransaction().commit();
     }
 }

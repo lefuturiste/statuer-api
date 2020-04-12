@@ -10,7 +10,7 @@ import java.util.UUID;
 
 import static fr.lefuturiste.statuer.HibernateService.getEntityManager;
 
-public class ProjectStore {
+public class ProjectStore extends Store {
     public static List<Project> getMany() {
         EntityManager entitymanager = getEntityManager();
         return entitymanager.createQuery("from Project", Project.class).getResultList();
@@ -26,22 +26,6 @@ public class ProjectStore {
         } catch (NoResultException e) {
             return null;
         }
-    }
-
-    public static void persist(Project project) {
-        EntityManager entitymanager = getEntityManager();
-        entitymanager.getTransaction().begin();
-        entitymanager.persist(project);
-        entitymanager.getTransaction().commit();
-        entitymanager.clear();
-    }
-
-    public static void delete(Project project) {
-        EntityManager entitymanager = getEntityManager();
-        entitymanager.getTransaction().begin();
-        entitymanager.remove(project);
-        entitymanager.getTransaction().commit();
-        entitymanager.clear();
     }
 
     public static Project getOneByNameAndByNamespace(String name, Namespace namespace) {
