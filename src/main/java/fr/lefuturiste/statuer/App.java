@@ -1,9 +1,8 @@
 package fr.lefuturiste.statuer;
 
-import fr.lefuturiste.statuer.controllers.NamespaceController;
-import fr.lefuturiste.statuer.controllers.ProjectController;
-import fr.lefuturiste.statuer.controllers.QueryController;
-import fr.lefuturiste.statuer.controllers.ServiceController;
+import fr.lefuturiste.statuer.controllers.*;
+import fr.lefuturiste.statuer.models.Service;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.json.JSONObject;
 import spark.Response;
 import spark.Spark;
@@ -12,16 +11,32 @@ import java.time.Instant;
 
 public class App {
     private static CheckThread checkThread;
+    private static DiscordBot discordBot;
 
     public static void main(String[] args) {
+        Dotenv dotenv = Dotenv.configure()
+                .directory(System.getProperty("user.dir"))
+                .load();
+
+        HibernateService.setConfig(
+                dotenv.get("MYSQL_CONNECTION_URL"),
+                dotenv.get("MYSQL_USERNAME"),
+                dotenv.get("MYSQL_PASSWORD")
+        );
         System.setProperty("user.timezone", "Europe/Paris");
 //        new OnStart().run();
+        discordBot = new DiscordBot(
+                dotenv.get("DISCORD_CLIENT_ID"),
+                dotenv.get("DISCORD_BOT_TOKEN")
+        );
+        System.out.println(discordBot.getAuthorizeUrl());
         checkThread = new CheckThread();
         Spark.port(8080);
         Spark.get("/", (req, res) -> {
             res.status(200);
             return new JSONObject().put("success", true);
         });
+        Spark.post("/graphql", "application/json", GraphQLController.execute);
         Spark.get("/query/:path", "application/json", QueryController.get);
         Spark.post("/query/:path", "application/json", QueryController.create);
         Spark.put("/query/:path", "application/json", QueryController.update);
@@ -52,7 +67,7 @@ public class App {
     }
 
     public static String returnJSON(Response response, JSONObject jsonObject) {
-        response.header("Content-Type", "application/json");
+        response.header("Content-type", "application/json");
         return jsonObject.toString(0);
     }
 
