@@ -1,6 +1,7 @@
-# Statuer, a monitor server
+# Statuer, a monitor server [WIP]
 
 Statuer is a self hosted service to help you manage all your importants services (HTTP, TCP, databases...).
+This project is still in progress
 
 ## Requirements
 
@@ -10,7 +11,7 @@ Statuer is a self hosted service to help you manage all your importants services
 
 ## How to install your statuer instance ?
 
-### Using docker
+### Using docker (not yet available)
 
 Image of the api: `lefuturiste/statuer-api`
 
@@ -52,6 +53,8 @@ commands:
 - ??last :show the
 - ??get 'path"
 
+Discord authorization: restrain a discord bot by channel and by discord user.
+
 ## Structure, architecture
 
 ### Database entities
@@ -63,15 +66,15 @@ The statuer data structure is divided into distinct entities:
 - **Service**: inside a project you will have many service for example an API, a database, a user dashboard or panel, workers and more
 - **Incident**: when a service fail a incident will be created this incident will be considered as 'resolved' when the service is up again
 
-### Alerting
+### Notifier
 
-This piece of code will be called when there is a need of alerting.
+This piece of code will be called when there is a need of alerting when the status of a service change.
 
-- Webhook
-- Specific webhook integration for Slack or Discord 
-- Twitter bot integration
-- SMS with different API
-- Email
+- Webhook (previsioning)
+- Specific webhook integration for Slack (previsioning) or Discord (available) 
+- Twitter bot integration (previsioning)
+- SMS with different API (previsioning)
+- Email (previsioning)
 
 ### Checker
 
@@ -79,10 +82,10 @@ This piece of code will check the service using a specific method.
 This will return the availability (up|down) of the service along with the response time in ms.
 
 - HTTP
-- PING
-- TCP
-- SMTP
-- MYSQL
-- MongoDB
-- RabbitMQ
-- SSH
+- PING (previsioning)
+- TCP (previsioning)
+- SMTP (previsioning)
+- MYSQL (previsioning)
+- MongoDB (previsioning)
+- RabbitMQ (previsioning)
+- SSH (previsioning)
