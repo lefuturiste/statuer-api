@@ -20,7 +20,6 @@ public class App {
                 dotenv.get("MYSQL_PASSWORD")
         );
         System.setProperty("user.timezone", "Europe/Paris");
-//        new OnStart().run();
         discordBot = new DiscordBot(
                 dotenv.get("DISCORD_CLIENT_ID"),
                 dotenv.get("DISCORD_BOT_TOKEN")

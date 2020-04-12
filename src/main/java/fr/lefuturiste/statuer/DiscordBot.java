@@ -7,30 +7,33 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import javax.security.auth.login.LoginException;
-import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DiscordBot {
     private JDA jda;
 
     private String clientId;
 
+    private static List<String> managerRoles = Arrays.asList("can-deploy", "can-manage", "statuer");
+
+    private static List<String> managerCommands = Arrays.asList("create", "edit", "delete");
+
     DiscordBot(String clientId, String token) {
         this.clientId = clientId;
         //  https://discordapp.com/oauth2/authorize?client_id=INSERT_CLIENT_ID_HERE&scope=bot&permissions=0
-
         try {
             jda = new JDABuilder(AccountType.BOT)
-                .setToken(token)
-                .addEventListener(new EventListener())
-                .buildBlocking();
-            jda.getPresence().setGame(Game.of(Game.GameType.WATCHING,"??|%%|&&|## and a lot of services"));
+                    .setToken(token)
+                    .addEventListener(new EventListener())
+                    .buildBlocking();
+            jda.getPresence().setGame(Game.of(Game.GameType.WATCHING, "??|%%|&&|## and a lot of services"));
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }
     }
-
 
     String getAuthorizeUrl() {
         int permissionInteger = 537128000;
@@ -83,14 +86,24 @@ public class DiscordBot {
                                 ) {
                             String rawCommand = message.getContentDisplay().substring(2);
                             String[] commandComponents = rawCommand.split(" ");
+
+                            // verify permission
+                            if (managerCommands.contains(commandComponents[0]) &&
+                                    event.getMember().getRoles().stream().filter(
+                                            role -> DiscordBot.managerRoles.contains(role.getName())
+                                    ).collect(Collectors.toList()).size() == 0) {
+                                DiscordBot.warn(event.getChannel(), "Get the fuck out of my store, we are closed (permission issue)");
+                                return;
+                            }
+
                             // 'create' 'param1="something' 'else"'
                             // we look for components with quotes
                             String pair = null;
                             ArrayList<String> newCommandComponents = new ArrayList<>();
-                            for (String commandComponent: commandComponents) {
+                            for (String commandComponent : commandComponents) {
                                 if (commandComponent.indexOf('"') != -1 && pair == null) {
                                     pair = commandComponent;
-                                } else if (commandComponent.indexOf('"') != -1 && pair != null){
+                                } else if (commandComponent.indexOf('"') != -1 && pair != null) {
                                     newCommandComponents.add(pair.substring(1) + ' ' + commandComponent.substring(0, commandComponent.length() - 1));
                                     pair = null;
                                 } else {
@@ -102,7 +115,6 @@ public class DiscordBot {
                             }
 
                             commandComponents = newCommandComponents.toArray(new String[0]);
-                            System.out.println(commandComponents);
                             switch (commandComponents[0]) {
                                 case "debug":
                                     StringBuilder output = new StringBuilder("```\n");
@@ -127,7 +139,7 @@ public class DiscordBot {
                                     DiscordCommandsController.edit.run(event, commandComponents);
                                     break;
                                 default:
-                                    event.getChannel().sendMessage("Invalid command").complete();
+                                    DiscordBot.warn(event.getChannel(), "Unknown command!");
                                     break;
                             }
                         }
