@@ -1,4 +1,4 @@
-package fr.lefuturiste.statuer;
+package fr.lefuturiste.statuer.notifier;
 
 import fr.lefuturiste.statuer.models.Incident;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -10,9 +10,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
-class Notifier {
+public class DiscordNotifier implements NotifierInterface {
 
-    static void notify(Incident incident) {
+    public static void notify(Incident incident) {
         // search for a discord webhooks
         String discordWebhook;
         discordWebhook = incident.getService().getProject().getNamespace().getDiscordWebhook();

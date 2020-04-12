@@ -2,6 +2,7 @@ package fr.lefuturiste.statuer;
 
 import fr.lefuturiste.statuer.models.Incident;
 import fr.lefuturiste.statuer.models.Service;
+import fr.lefuturiste.statuer.notifier.DiscordNotifier;
 import fr.lefuturiste.statuer.stores.IncidentStore;
 import fr.lefuturiste.statuer.stores.ServiceStore;
 
@@ -100,7 +101,7 @@ public class CheckThread implements Runnable {
                             service.setUptime(numberBigDecimal.floatValue());
                         }
                         // we can now notify of the incident (updated or created)
-                        Notifier.notify(lastIncident);
+                        DiscordNotifier.notify(lastIncident);
                         ServiceStore.persist(service, false);
                     }
                     if (service.getAvailable() == null) {
