@@ -26,7 +26,7 @@ public class Notifier {
             String status = service.getAvailable() ? "up": "down";
             String extra = "";
             if (status.equals("up")) {
-                Duration duration = Duration.between(Instant.now(), service.getLastDownAt().toInstant()).abs();
+                Duration duration = Duration.between(Instant.now(), service.getLastDownAt()).abs();
                 long s = duration.getSeconds();
                 extra += " With an estimated down time of " + String.format("%d:%02d:%02d", s/3600, (s%3600)/60, (s%60));
             }

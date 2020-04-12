@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,9 +39,9 @@ public class Service {
 
     private int timeout; // in seconds
 
-    private Date lastCheckAt;
+    private Instant lastCheckAt;
 
-    private Date lastDownAt;
+    private Instant lastDownAt;
 
     @ManyToOne
     private Project project;
@@ -89,6 +90,8 @@ public class Service {
         jsonObject.put("http_expected_status", httpExpectedStatus);
         jsonObject.put("discord_webhook", discordWebhook);
         jsonObject.put("last_checked_at", lastCheckAt != null ? lastCheckAt.toString() : null);
+        jsonObject.put("last_incident", lastIncident != null ? lastIncident.toString() : null);
+        jsonObject.put("uptime", uptime);
         jsonObject.put("timeout", timeout);
         if (deep == 1) {
             jsonObject.put("project", getProject().toJSONObject(0));
@@ -144,8 +147,8 @@ public class Service {
         status = available ? "up": "down";
     }
 
-    public void setStatus(String status) {
-        status = status;
+    public void setStatus(String newStatus) {
+        status = newStatus;
     }
 
     public String getStatus() {
@@ -160,23 +163,24 @@ public class Service {
         this.discordWebhook = discordWebhook;
     }
 
-    public Date getLastCheckAt() {
+    public Instant getLastCheckAt() {
         return lastCheckAt;
     }
 
-    public void setLastCheckAt(Date lastCheckAt) {
+    public void setLastCheckAt(Instant lastCheckAt) {
         this.lastCheckAt = lastCheckAt;
     }
 
     public String getPath() {
-        return this.project.getNamespace().getName() + "." + this.project.getName() + "." + this.name;
+        System.out.println(getProject().getNamespace());
+        return getProject().getNamespace().getName() + "." + getProject().getName() + "." + this.name;
     }
 
-    public Date getLastDownAt() {
+    public Instant getLastDownAt() {
         return lastDownAt;
     }
 
-    public void setLastDownAt(Date lastDownAt) {
+    public void setLastDownAt(Instant lastDownAt) {
         this.lastDownAt = lastDownAt;
     }
 

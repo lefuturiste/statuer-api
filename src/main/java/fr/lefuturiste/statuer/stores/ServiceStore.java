@@ -5,6 +5,9 @@ import fr.lefuturiste.statuer.models.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,11 +56,12 @@ public class ServiceStore {
     public static Service getOneByNameAndByProject(String name, Project project) {
         EntityManager entitymanager = getEntityManager();
         try {
-            return entitymanager
-                    .createQuery("from Service where name = :name and project = :project", Service.class)
-                    .setParameter("name", name)
-                    .setParameter("project", project)
-                    .getSingleResult();
+            CriteriaBuilder builder = entitymanager.getCriteriaBuilder();
+            CriteriaQuery<Service> query = builder.createQuery(Service.class);
+            Root<Service> service = query.from(Service.class);
+            query.where(builder.equal(service.get("name"), name), builder.equal(service.get("project"), project));
+
+            return entitymanager.createQuery(query.select(service)).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

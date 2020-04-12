@@ -1,13 +1,10 @@
 package fr.lefuturiste.statuer;
 
 import fr.lefuturiste.statuer.controllers.*;
-import fr.lefuturiste.statuer.models.Service;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.json.JSONObject;
 import spark.Response;
 import spark.Spark;
-
-import java.time.Instant;
 
 public class App {
     private static CheckThread checkThread;
@@ -17,7 +14,6 @@ public class App {
         Dotenv dotenv = Dotenv.configure()
                 .directory(System.getProperty("user.dir"))
                 .load();
-
         HibernateService.setConfig(
                 dotenv.get("MYSQL_CONNECTION_URL"),
                 dotenv.get("MYSQL_USERNAME"),

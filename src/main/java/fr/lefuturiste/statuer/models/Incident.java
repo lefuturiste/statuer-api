@@ -20,9 +20,9 @@ public class Incident {
     private String impact; // 'high' or 'low'
 
     @NotNull
-    private Date startedAt;
+    private Instant startedAt;
 
-    private Date finishedAt;
+    private Instant finishedAt;
 
     @ManyToOne
     private Service service;
@@ -59,19 +59,19 @@ public class Incident {
         this.impact = impact;
     }
 
-    public Date getStartedAt() {
+    public Instant getStartedAt() {
         return startedAt;
     }
 
-    public void setStartedAt(Date startedAt) {
+    public void setStartedAt(Instant startedAt) {
         this.startedAt = startedAt;
     }
 
-    public Date getFinishedAt() {
+    public Instant getFinishedAt() {
         return finishedAt;
     }
 
-    public void setFinishedAt(Date finishedAt) {
+    public void setFinishedAt(Instant finishedAt) {
         this.finishedAt = finishedAt;
     }
 

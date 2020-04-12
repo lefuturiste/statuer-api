@@ -90,4 +90,8 @@ public class Project {
     public List<Service> getServices() {
         return services;
     }
+
+    public String getPath() {
+        return this.getNamespace().getName() + "." + this.name;
+    }
 }

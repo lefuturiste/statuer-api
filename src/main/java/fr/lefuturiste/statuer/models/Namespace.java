@@ -73,4 +73,8 @@ public class Namespace {
     public void setDiscordWebhook(String discordWebhook) {
         this.discordWebhook = discordWebhook;
     }
+
+    public String getHidedDiscordWebpack() {
+        return discordWebhook.substring(0, discordWebhook.length() - 30) + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+    }
 }
