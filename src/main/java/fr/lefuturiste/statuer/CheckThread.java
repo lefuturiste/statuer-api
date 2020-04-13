@@ -1,5 +1,6 @@
 package fr.lefuturiste.statuer;
 
+import fr.lefuturiste.statuer.checker.HttpChecker;
 import fr.lefuturiste.statuer.models.Incident;
 import fr.lefuturiste.statuer.models.Service;
 import fr.lefuturiste.statuer.notifier.DiscordNotifier;
@@ -36,6 +37,8 @@ public class CheckThread implements Runnable {
         // at each pulse, look in the store for each service if the time is elapsed
         // if time elapsed perform check
         // update the check time in the memory and in the db
+        HttpChecker httpChecker = new HttpChecker();
+        DiscordNotifier discordNotifier = new DiscordNotifier();
         while (true) {
             //System.out.println("New check period...");
             for (Service service : services) {
@@ -50,7 +53,7 @@ public class CheckThread implements Runnable {
                         Instant.now());
                 if (durationSinceLastCheck.getSeconds() >= service.getCheckPeriod()) {
                     App.logger.debug("This service was not checked since: " + durationSinceLastCheck.getSeconds());
-                    boolean isAvailable = Checker.isAvailable(service);
+                    boolean isAvailable = httpChecker.isAvailable(service);
                     App.logger.debug("Service available: " + isAvailable);
                     if ((service.getAvailable() != null && service.getAvailable() != isAvailable) || (service.getAvailable() == null && !isAvailable)) {
                         service.setAvailable(isAvailable);
@@ -101,7 +104,7 @@ public class CheckThread implements Runnable {
                             service.setUptime(numberBigDecimal.floatValue());
                         }
                         // we can now notify of the incident (updated or created)
-                        DiscordNotifier.notify(lastIncident);
+                        discordNotifier.notify(lastIncident);
                         ServiceStore.persist(service, false);
                     }
                     if (service.getAvailable() == null) {

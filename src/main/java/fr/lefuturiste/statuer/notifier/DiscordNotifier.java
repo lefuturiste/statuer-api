@@ -3,7 +3,6 @@ package fr.lefuturiste.statuer.notifier;
 import fr.lefuturiste.statuer.App;
 import fr.lefuturiste.statuer.models.Incident;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.webhook.WebhookClient;
 import net.dv8tion.jda.webhook.WebhookClientBuilder;
 
 import java.awt.*;
@@ -13,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 
 public class DiscordNotifier implements NotifierInterface {
 
-    public static void notify(Incident incident) {
+    public void notify(Incident incident) {
         // search for a discord webhooks
         String discordWebhook;
         discordWebhook = incident.getService().getProject().getNamespace().getDiscordWebhook();
@@ -41,10 +40,7 @@ public class DiscordNotifier implements NotifierInterface {
             } else {
                 embed.setColor(Color.decode("#e74c3c")).setTitle("New incident!");
             }
-            WebhookClientBuilder builder = new WebhookClientBuilder(discordWebhook);
-            WebhookClient client = builder.build();
-
-            client.send(embed.build());
+            new WebhookClientBuilder(discordWebhook).build().send(embed.build());
         }
     }
 }

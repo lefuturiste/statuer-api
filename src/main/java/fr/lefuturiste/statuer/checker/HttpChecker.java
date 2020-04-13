@@ -1,4 +1,4 @@
-package fr.lefuturiste.statuer;
+package fr.lefuturiste.statuer.checker;
 
 import fr.lefuturiste.statuer.models.Service;
 import okhttp3.OkHttpClient;
@@ -7,14 +7,15 @@ import okhttp3.Response;
 
 import java.io.IOException;
 
-public class Checker {
+public class HttpChecker implements CheckerInterface {
 
-    private static OkHttpClient httpClient = new OkHttpClient();
+    private static OkHttpClient httpClient;
 
-    /**
-     * Find out if a service is now available
-     */
-    public static boolean isAvailable(Service service) {
+    public HttpChecker() {
+        httpClient = new OkHttpClient();
+    }
+
+    public boolean isAvailable(Service service) {
         Request request = new Request.Builder().url(service.getUrl()).build();
         Response response;
         int code = 0;
