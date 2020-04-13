@@ -28,6 +28,7 @@ public class DiscordNotifier implements NotifierInterface {
             EmbedBuilder embed = new EmbedBuilder();
             embed
                     .addField("Incident id", incident.getId(), true)
+                    .addBlankField(true)
                     .addField("Service url", incident.getService().getUrl(), true)
                     .setDescription(incident.getService().getPath() + " is now " + status + "!");
             if (status.equals("up")) {
