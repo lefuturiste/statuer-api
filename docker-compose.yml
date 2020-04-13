@@ -2,7 +2,7 @@ version: '3'
 services:
   api:
     image: lefuturiste/statuer-api:latest
-    name: statuer_api
+    container_name: statuer_api
     restart: always
     ports:
       - "9243:80"
