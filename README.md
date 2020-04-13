@@ -1,6 +1,6 @@
 # Statuer, a monitor server [WIP]
 
-Statuer is a self hosted service to help you manage all your importants services (HTTP, TCP, databases...).
+Statuer is a self hosted service to help you keep track of all your important services (HTTP, TCP, databases...).
 This project is still in progress
 
 ## Requirements
@@ -11,9 +11,24 @@ This project is still in progress
 
 ## How to install your statuer instance ?
 
-### Using docker (not yet available)
+### Using docker
 
-Image of the api: `lefuturiste/statuer-api`
+Image of the api: [lefuturiste/statuer-api](https://hub.docker.com/repository/docker/lefuturiste/statuer-api)
+
+- `docker pull lefuturiste/statuer-api:latest`
+- use the `docker run` command
+```bash
+docker run -d \
+    --name statuer \
+    -p 9425:80 \
+    -e MYSQL_CONNECTION_URL=jdbc:mysql://localhost:3306/statuer \
+    -e MYSQL_USERNAME=root \
+    -e MYSQL_PASSWORD=root \
+    -e DISCORD_BOT_TOKEN=XXX \
+    -e DISCORD_CLIENT_ID=4242 \
+lefuturiste/statuer-api:latest
+```
+- you can also directly use `docker-compose`. See `docker-compose.yml`
 
 ## Environment variables
 
