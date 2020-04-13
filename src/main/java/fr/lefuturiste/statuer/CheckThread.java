@@ -40,7 +40,6 @@ public class CheckThread implements Runnable {
         HttpChecker httpChecker = new HttpChecker();
         DiscordNotifier discordNotifier = new DiscordNotifier();
         while (true) {
-            //System.out.println("New check period...");
             for (Service service : services) {
                 if (service.getUrl() == null || service.getUrl().equals("")) {
                     App.logger.debug("Skipped service " + service.getName() + " (no url)");
@@ -60,7 +59,6 @@ public class CheckThread implements Runnable {
                         // status has changed
                         Incident lastIncident;
                         if (!isAvailable) {
-                            App.logger.debug("Status changed to DOWN");
                             // status as changed as DOWN
                             Instant downInstant = Instant.now();
                             service.setLastDownAt(downInstant);
@@ -72,7 +70,6 @@ public class CheckThread implements Runnable {
                             service.setLastIncident(lastIncident);
                             IncidentStore.persist(lastIncident, false);
                         } else {
-                            App.logger.debug("Status changed to UP");
                             // status as changed as UP
                             // we can update our incident to indicate the end of the incident
                             lastIncident = service.getLastIncident();
@@ -103,6 +100,7 @@ public class CheckThread implements Runnable {
                             App.logger.debug("Updated uptime to " + numberBigDecimal);
                             service.setUptime(numberBigDecimal.floatValue());
                         }
+                        App.logger.info("Status of service " + service.getName() + " changed to " + (isAvailable ? "UP" : "DOWN"));
                         // we can now notify of the incident (updated or created)
                         discordNotifier.notify(lastIncident);
                         ServiceStore.persist(service, false);
@@ -111,9 +109,6 @@ public class CheckThread implements Runnable {
                         service.setAvailable(isAvailable);
                         ServiceStore.persist(service, false);
                     }
-                    //service.setLastCheckAt(Instant.now());
-                } else {
-                    App.logger.debug("Service already checked");
                 }
             }
 

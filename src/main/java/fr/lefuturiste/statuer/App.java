@@ -66,7 +66,19 @@ public class App {
             Spark.delete("/:id", "application/json", ServiceController.delete);
         });
         Spark.awaitInitialization();
-        checkThread.run();
+        while (true) {
+            try {
+                checkThread.run();
+            } catch (Exception checkThreadException) {
+                checkThreadException.printStackTrace();
+                logger.error("Check thread has exited due to an exception. Restarting in 10 seconds...");
+                try {
+                    Thread.sleep(Duration.ofSeconds(10).toMillis());
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
+            }
+        }
     }
 
     public static String returnJSON(Response response, JSONObject jsonObject) {
