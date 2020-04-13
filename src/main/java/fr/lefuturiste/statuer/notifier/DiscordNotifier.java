@@ -1,5 +1,6 @@
 package fr.lefuturiste.statuer.notifier;
 
+import fr.lefuturiste.statuer.App;
 import fr.lefuturiste.statuer.models.Incident;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.webhook.WebhookClient;
@@ -23,13 +24,13 @@ public class DiscordNotifier implements NotifierInterface {
             }
         }
         if (discordWebhook != null) {
-            System.out.println(" We will send a discord webhook");
+            App.logger.debug("Send a discord webhook");
             String status = incident.getService().getAvailable() ? "up": "down";
             EmbedBuilder embed = new EmbedBuilder();
             embed
                     .addField("Incident id", incident.getId(), true)
                     .addField("Service url", incident.getService().getUrl(), true)
-                    .setDescription(incident.getService().getPath() + " is now " + status + " !" );
+                    .setDescription(incident.getService().getPath() + " is now " + status + "!");
             if (status.equals("up")) {
                 embed
                     .addField("Started at", DateTimeFormatter.ISO_INSTANT.format(incident.getStartedAt()), true)
@@ -43,7 +44,7 @@ public class DiscordNotifier implements NotifierInterface {
             WebhookClientBuilder builder = new WebhookClientBuilder(discordWebhook);
             WebhookClient client = builder.build();
 
-            client.send(embed.build()).thenAccept((message) -> System.out.println("Message with embed has been sent"));
+            client.send(embed.build());
         }
     }
 }

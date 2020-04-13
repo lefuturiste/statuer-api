@@ -3,14 +3,18 @@ package fr.lefuturiste.statuer;
 import fr.lefuturiste.statuer.controllers.*;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.Response;
 import spark.Spark;
 
 public class App {
     private static CheckThread checkThread;
     private static DiscordBot discordBot;
+    public static Logger logger = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) {
+        logger.info("Starting application...");
         Dotenv dotenv = Dotenv.configure()
                 .directory(System.getProperty("user.dir"))
                 .load();
@@ -24,7 +28,6 @@ public class App {
                 dotenv.get("DISCORD_CLIENT_ID"),
                 dotenv.get("DISCORD_BOT_TOKEN")
         );
-        System.out.println(discordBot.getAuthorizeUrl());
         checkThread = new CheckThread();
         Spark.port(8080);
         Spark.get("/", (req, res) -> {

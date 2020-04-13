@@ -87,7 +87,6 @@ public class DiscordCommandsController {
                     DiscordBot.warn(event.getChannel(), "Invalid path: service not found");
                     return;
                 }
-                System.out.println(service.toJSONObject(0));
                 builder.setTitle(service.getPath())
                         .setDescription("A Statuer's service")
                         .setColor(Color.decode("#e74c3c"))

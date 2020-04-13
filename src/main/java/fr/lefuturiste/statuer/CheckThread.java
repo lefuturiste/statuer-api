@@ -22,13 +22,14 @@ public class CheckThread implements Runnable {
     private List<Service> services;
 
     public void updateService() {
-        System.out.println("Update service trigger");
+        App.logger.info("CheckThread was forced to update the services cache");
         services = ServiceStore.getMany();
     }
 
     @Override
     public void run() {
-        System.out.println("Starting check thread...");
+        Duration sleepDuration = Duration.ofSeconds(10);
+        App.logger.info("Starting check thread with sleepDuration of " + sleepDuration.toString());
         updateService();
         // load the services into a store in memory
         // have a clock
@@ -39,25 +40,24 @@ public class CheckThread implements Runnable {
             //System.out.println("New check period...");
             for (Service service : services) {
                 if (service.getUrl() == null || service.getUrl().equals("")) {
-                    System.out.println("Skipped service " + service.getName() + " (no url)");
+                    App.logger.debug("Skipped service " + service.getName() + " (no url)");
                     break;
                 }
-                System.out.println("Checking service " + service.getName());
+                App.logger.debug("Checking service " + service.getName());
                 // if the time between now and last checked at is more or equal than the time of check_period go check it
                 Duration durationSinceLastCheck = Duration.between(
                         service.getLastCheckAt() != null ? service.getLastCheckAt() : Instant.now().minus(Duration.ofSeconds(service.getCheckPeriod())),
                         Instant.now());
                 if (durationSinceLastCheck.getSeconds() >= service.getCheckPeriod()) {
-                    System.out.println("    This service was not checked since: " + durationSinceLastCheck.getSeconds());
-                    System.out.println("    Now checking: " + service.getName());
+                    App.logger.debug("This service was not checked since: " + durationSinceLastCheck.getSeconds());
                     boolean isAvailable = Checker.isAvailable(service);
-                    System.out.println("    Service available: " + isAvailable);
+                    App.logger.debug("Service available: " + isAvailable);
                     if ((service.getAvailable() != null && service.getAvailable() != isAvailable) || (service.getAvailable() == null && !isAvailable)) {
                         service.setAvailable(isAvailable);
                         // status has changed
                         Incident lastIncident;
                         if (!isAvailable) {
-                            System.out.println("    Status changed to DOWN");
+                            App.logger.debug("Status changed to DOWN");
                             // status as changed as DOWN
                             Instant downInstant = Instant.now();
                             service.setLastDownAt(downInstant);
@@ -69,7 +69,7 @@ public class CheckThread implements Runnable {
                             service.setLastIncident(lastIncident);
                             IncidentStore.persist(lastIncident, false);
                         } else {
-                            System.out.println("    Status changed to UP");
+                            App.logger.debug("Status changed to UP");
                             // status as changed as UP
                             // we can update our incident to indicate the end of the incident
                             lastIncident = service.getLastIncident();
@@ -97,7 +97,7 @@ public class CheckThread implements Runnable {
                             float percentage = (float) (totalDownDuration.getSeconds() * 100) / rangeDuration.getSeconds();
                             BigDecimal numberBigDecimal = new BigDecimal(percentage);
                             numberBigDecimal = numberBigDecimal.setScale(8, RoundingMode.HALF_UP);
-                            System.out.println("    Updated uptime to " + numberBigDecimal);
+                            App.logger.debug("Updated uptime to " + numberBigDecimal);
                             service.setUptime(numberBigDecimal.floatValue());
                         }
                         // we can now notify of the incident (updated or created)
@@ -110,12 +110,12 @@ public class CheckThread implements Runnable {
                     }
                     //service.setLastCheckAt(Instant.now());
                 } else {
-                    System.out.println("    Already checked");
+                    App.logger.debug("Service already checked");
                 }
             }
 
             try {
-                Thread.sleep(Duration.ofSeconds(10).toMillis());
+                Thread.sleep(sleepDuration.toMillis());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -170,7 +170,6 @@ public class Service {
     }
 
     public String getPath() {
-        System.out.println(getProject().getNamespace());
         return getProject().getNamespace().getName() + "." + getProject().getName() + "." + this.name;
     }
 
