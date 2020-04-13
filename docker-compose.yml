@@ -2,12 +2,13 @@ version: '3'
 services:
   api:
     image: lefuturiste/statuer-api:latest
+    name: statuer_api
     restart: always
     ports:
       - "9243:80"
     environment:
-      - MYSQL_CONNECTION_URL=jdbc:mysql://node03.cluster.stantabcorp.net:3306/statuer
-      - MYSQL_USERNAME=statuer
-      - MYSQL_PASSWORD=ginZLIywJ6zz7XaW
-      - DISCORD_BOT_TOKEN=NTg5MjA0MDYxNjAyMTg1MjI3.XQQRdw.K0D393csWsZSLoy3jLY2gQBdYII
-      - DISCORD_CLIENT_ID=4242589204061602185227
+      - MYSQL_CONNECTION_URL=jdbc:mysql://host:port/database
+      - MYSQL_USERNAME=username
+      - MYSQL_PASSWORD=password
+      - DISCORD_BOT_TOKEN=discord_token
+      - DISCORD_CLIENT_ID=client_id
