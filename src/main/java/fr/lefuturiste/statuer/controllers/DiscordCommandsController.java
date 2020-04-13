@@ -35,6 +35,18 @@ public class DiscordCommandsController {
             .build()
     ).complete();
 
+    public static DiscordCommandRoute help = (event, commandComponents) -> event.getChannel().sendMessage(new EmbedBuilder()
+            .setTitle(":interrobang: Commands available")
+            .setColor(Color.decode("#2980b9"))
+            .addField("??create <path>", "Create all entities of the path", false)
+            .addField("??edit <path> key1=value1 key2=value2", "Edit a path with key=value syntax", false)
+            .addField("??delete <path>", "Recursively delete a path", false)
+            .addField("??get <path>", "Get path's data", false)
+            .addField("??about", "Get bot's meta data", false)
+            .addField("??ping", "Ping bot", false)
+            .build()
+    ).complete();
+
     public static DiscordCommandRoute get = (event, commandComponents) -> {
         if (commandComponents.length == 1) {
             DiscordBot.warn(event.getChannel(), "Usage: get <path>");

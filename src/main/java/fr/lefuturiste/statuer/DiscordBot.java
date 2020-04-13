@@ -135,6 +135,9 @@ public class DiscordBot {
                                 case "about":
                                     DiscordCommandsController.about.run(event, commandComponents);
                                     break;
+                                case "help":
+                                    DiscordCommandsController.help.run(event, commandComponents);
+                                    break;
                                 case "get":
                                     DiscordCommandsController.get.run(event, commandComponents);
                                     break;
