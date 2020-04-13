@@ -17,6 +17,8 @@ public class DiscordBot {
 
     private String clientId;
 
+    private String token;
+
     private static List<String> managerRoles = Arrays.asList("can-deploy", "can-manage", "statuer");
 
     private static List<String> managerCommands = Arrays.asList("create", "edit", "delete");
@@ -24,6 +26,10 @@ public class DiscordBot {
     DiscordBot(String clientId, String token) {
         this.clientId = clientId;
         //  https://discordapp.com/oauth2/authorize?client_id=INSERT_CLIENT_ID_HERE&scope=bot&permissions=0
+        this.token = token;
+    }
+
+    void start() {
         try {
             jda = new JDABuilder(AccountType.BOT)
                     .setToken(token)

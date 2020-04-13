@@ -8,28 +8,30 @@ import org.slf4j.LoggerFactory;
 import spark.Response;
 import spark.Spark;
 
+import java.util.Objects;
+
 public class App {
     private static CheckThread checkThread;
-    private static DiscordBot discordBot;
     public static Logger logger = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) {
         logger.info("Starting application...");
-        Dotenv dotenv = Dotenv.configure()
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing()
                 .directory(System.getProperty("user.dir"))
                 .load();
+
         HibernateService.setConfig(
                 dotenv.get("MYSQL_CONNECTION_URL"),
                 dotenv.get("MYSQL_USERNAME"),
                 dotenv.get("MYSQL_PASSWORD")
         );
         System.setProperty("user.timezone", "Europe/Paris");
-        discordBot = new DiscordBot(
+        new DiscordBot(
                 dotenv.get("DISCORD_CLIENT_ID"),
                 dotenv.get("DISCORD_BOT_TOKEN")
-        );
+        ).start();
         checkThread = new CheckThread();
-        Spark.port(8080);
+        Spark.port(Integer.valueOf(Objects.requireNonNull(dotenv.get("PORT"))));
         Spark.get("/", (req, res) -> {
             res.status(200);
             return new JSONObject().put("success", true);
