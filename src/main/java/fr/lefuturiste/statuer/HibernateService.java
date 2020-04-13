@@ -1,9 +1,9 @@
 package fr.lefuturiste.statuer;
 
-import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 public class HibernateService {
 
@@ -24,6 +24,7 @@ public class HibernateService {
             configuration.setProperty("hibernate.connection.url", connectionUrl);
             configuration.setProperty("hibernate.connection.username", username);
             configuration.setProperty("hibernate.connection.password", password);
+            configuration.setProperty("hibernate.show_sql", "false");
             String debugConfig = "Hibernate settings " +
                     configuration.getProperty("connection.url") +
                     " " +
@@ -31,8 +32,8 @@ public class HibernateService {
                     " " +
                     configuration.getProperty("hibernate.connection.password");
             App.logger.debug(debugConfig);
-            SessionFactory sessionFactory = configuration.buildSessionFactory();
-            entityManager = sessionFactory.createEntityManager();
+            EntityManagerFactory entityManagerFactory = configuration.buildSessionFactory();
+            entityManager = entityManagerFactory.createEntityManager();
         }
         return entityManager;
     }

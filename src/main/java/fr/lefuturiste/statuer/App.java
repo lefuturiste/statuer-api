@@ -23,12 +23,14 @@ public class App {
                 .directory(System.getProperty("user.dir"))
                 .load();
 
+        System.setProperty("org.jboss.logging.provider", "slf4j");
+        System.setProperty("user.timezone", "Europe/Paris");
         HibernateService.setConfig(
                 dotenv.get("MYSQL_CONNECTION_URL"),
                 dotenv.get("MYSQL_USERNAME"),
                 dotenv.get("MYSQL_PASSWORD")
         );
-        System.setProperty("user.timezone", "Europe/Paris");
+        HibernateService.getEntityManager();
         new DiscordBot(
                 dotenv.get("DISCORD_CLIENT_ID"),
                 dotenv.get("DISCORD_BOT_TOKEN")
