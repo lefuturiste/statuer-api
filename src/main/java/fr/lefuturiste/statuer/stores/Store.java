@@ -20,12 +20,13 @@ public class Store {
         }
     }
 
-    public static void delete(Object object) {
+    public static int delete(Object object) {
         EntityManager entitymanager = getEntityManager();
         entitymanager.getTransaction().begin();
         entitymanager.remove(object);
         entitymanager.getTransaction().commit();
         entitymanager.clear();
+        return 1;
     }
 
 }

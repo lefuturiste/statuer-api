@@ -1,5 +1,6 @@
 package fr.lefuturiste.statuer.controllers;
 
+import fr.lefuturiste.statuer.App;
 import fr.lefuturiste.statuer.DiscordBot;
 import fr.lefuturiste.statuer.models.Namespace;
 import fr.lefuturiste.statuer.models.Project;
@@ -223,5 +224,42 @@ public class DiscordCommandsController {
         }
 
         DiscordBot.success(event.getChannel());
+    };
+
+    public static DiscordCommandRoute delete = (event, commandComponents) -> {
+        if (commandComponents.length == 1) {
+            DiscordBot.warn(event.getChannel(), "Usage: delete <path>");
+            return;
+        }
+        String[] pathDecomposed = commandComponents[1].split("\\.");
+        Namespace namespace = NamespaceStore.getOneByName(pathDecomposed[0]);
+        if (namespace == null) {
+            DiscordBot.warn(event.getChannel(), "Invalid path: namespace not found");
+            return;
+        }
+        Project project = null;
+        if (pathDecomposed.length >= 2)
+            project = ProjectStore.getOneByNameAndByNamespace(pathDecomposed[1], namespace);
+        if (project == null && pathDecomposed.length >= 2) {
+            DiscordBot.warn(event.getChannel(), "Invalid path: project not found");
+            return;
+        }
+        int deletedCount = 0;
+        switch (pathDecomposed.length) {
+            case 1:
+                deletedCount = NamespaceStore.delete(namespace);
+                break;
+            case 2:
+                deletedCount = ProjectStore.delete(project);
+                break;
+            case 3:
+                Service service = ServiceStore.getOneByNameAndByProject(pathDecomposed[2], project);
+                if (service == null) {
+                    DiscordBot.warn(event.getChannel(), "Invalid path: service not found");
+                    return;
+                }
+                deletedCount = ServiceStore.delete(service);
+        }
+        event.getChannel().sendMessage("Entities deleted: " + deletedCount).complete();
     };
 }

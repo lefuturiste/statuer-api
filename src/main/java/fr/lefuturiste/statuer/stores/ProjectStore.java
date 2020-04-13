@@ -2,6 +2,7 @@ package fr.lefuturiste.statuer.stores;
 
 import fr.lefuturiste.statuer.models.Namespace;
 import fr.lefuturiste.statuer.models.Project;
+import fr.lefuturiste.statuer.models.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -39,5 +40,17 @@ public class ProjectStore extends Store {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    /**
+     * Will delete recursively the projects and its services
+     *
+     * @param project Project
+     */
+    public static int delete(Project project) {
+        int entitiesDeleted = Store.delete(project);
+        for (Service service: project.getServices())
+            entitiesDeleted += ServiceStore.delete(service);
+        return entitiesDeleted;
     }
 }

@@ -144,6 +144,9 @@ public class DiscordBot {
                                 case "edit":
                                     DiscordCommandsController.edit.run(event, commandComponents);
                                     break;
+                                case "delete":
+                                    DiscordCommandsController.delete.run(event, commandComponents);
+                                    break;
                                 default:
                                     DiscordBot.warn(event.getChannel(), "Unknown command!");
                                     break;

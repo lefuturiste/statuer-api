@@ -1,6 +1,8 @@
 package fr.lefuturiste.statuer.stores;
 
 import fr.lefuturiste.statuer.models.Namespace;
+import fr.lefuturiste.statuer.models.Project;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.util.List;
@@ -36,5 +38,17 @@ public class NamespaceStore extends Store {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    /**
+     * Will delete recursively the namespace, its projects and its services
+     *
+     * @param namespace Namespace
+     */
+    public static int delete(Namespace namespace) {
+        int entitiesDeleted = Store.delete(namespace);
+        for (Project project: namespace.getProjects())
+            entitiesDeleted += ProjectStore.delete(project);
+        return entitiesDeleted;
     }
 }
