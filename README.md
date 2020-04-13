@@ -1,5 +1,7 @@
 # Statuer, a monitor server [WIP]
 
+![Continuous integration](https://github.com/lefuturiste/statuer-api/workflows/Continuous%20integration/badge.svg)
+
 Statuer is a self hosted service to help you keep track of all your important services (HTTP, TCP, databases...).
 This project is still in progress
 
