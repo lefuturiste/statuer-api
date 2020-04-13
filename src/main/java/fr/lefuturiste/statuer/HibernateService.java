@@ -20,10 +20,17 @@ public class HibernateService {
 
     public static EntityManager getEntityManager() {
         if (entityManager == null) {
-             Configuration configuration = new Configuration().configure();
-             configuration.setProperty("connection.url", connectionUrl);
-             configuration.setProperty("hibernate.connection.username", username);
-             configuration.setProperty("hibernate.connection.password", password);
+            Configuration configuration = new Configuration().configure();
+            configuration.setProperty("hibernate.connection.url", connectionUrl);
+            configuration.setProperty("hibernate.connection.username", username);
+            configuration.setProperty("hibernate.connection.password", password);
+            String debugConfig = "Hibernate settings " +
+                    configuration.getProperty("connection.url") +
+                    " " +
+                    configuration.getProperty("hibernate.connection.username") +
+                    " " +
+                    configuration.getProperty("hibernate.connection.password");
+            App.logger.debug(debugConfig);
             SessionFactory sessionFactory = configuration.buildSessionFactory();
             entityManager = sessionFactory.createEntityManager();
         }
