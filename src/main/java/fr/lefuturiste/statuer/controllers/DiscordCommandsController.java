@@ -27,14 +27,6 @@ public class DiscordCommandsController {
 
     public static DiscordCommandRoute ping = (event, commandComponents) -> event.getChannel().sendMessage("Pong!").complete();
 
-    public static DiscordCommandRoute about = (event, commandComponents) -> event.getChannel().sendMessage(new EmbedBuilder()
-            .setTitle("About statuer")
-            .setColor(Color.decode("#e74c3c"))
-            .addField("Version", "v1.0", false)
-            .addField("Developer", "<@169164454255263745>", false)
-            .build()
-    ).complete();
-
     public static DiscordCommandRoute help = (event, commandComponents) -> event.getChannel().sendMessage(new EmbedBuilder()
             .setTitle(":interrobang: Commands available")
             .setColor(Color.decode("#2980b9"))
@@ -46,6 +38,21 @@ public class DiscordCommandsController {
             .addField("??ping", "Ping bot", false)
             .build()
     ).complete();
+
+    public static DiscordCommandRoute about = (event, commandComponents) -> {
+        long upTime = App.getUpTime().getSeconds();
+        String upTimeHuman = String.format("%d:%02d:%02d", upTime/3600, (upTime%3600)/60, (upTime%60));
+        event.getChannel().sendMessage(new EmbedBuilder()
+                .setTitle("About statuer")
+                .setColor(Color.decode("#2980b9"))
+                .addField("Version", "v1.0", false)
+                .addField("Developer", "<@169164454255263745>", true)
+                .addBlankField(true)
+                .addField("Uptime", upTimeHuman, true)
+                .addField("Github", "https://github.com/lefuturiste/statuer-api", false)
+                .build()
+        ).complete();
+    };
 
     public static DiscordCommandRoute get = (event, commandComponents) -> {
         if (commandComponents.length == 1) {
@@ -82,6 +89,7 @@ public class DiscordCommandsController {
                                 true);
                 break;
             case 2: // search for a project
+                assert project != null;
                 builder.setTitle(project.getPath())
                         .setDescription("A Statuer's project")
                         .setColor(Color.decode("#e74c3c"))

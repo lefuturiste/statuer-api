@@ -8,13 +8,16 @@ import org.slf4j.LoggerFactory;
 import spark.Response;
 import spark.Spark;
 
+import java.time.Duration;
 import java.util.Objects;
 
 public class App {
     private static CheckThread checkThread;
     public static Logger logger = LoggerFactory.getLogger(App.class);
+    private static long startTime;
 
     public static void main(String[] args) {
+        startTime = System.currentTimeMillis();
         logger.info("Starting application...");
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing()
                 .directory(System.getProperty("user.dir"))
@@ -73,5 +76,9 @@ public class App {
 
     public static void notifyUpdateOnService() {
         checkThread.updateService();
+    }
+
+    public static Duration getUpTime() {
+        return Duration.ofMillis(System.currentTimeMillis() - startTime);
     }
 }
