@@ -67,6 +67,12 @@ public class App {
             Spark.put("/:id", "application/json", ServiceController.update);
             Spark.delete("/:id", "application/json", ServiceController.delete);
         });
+        Spark.notFound((req, res) -> new JSONObject()
+                .put("success", false)
+                .put("error", "Not found"));
+        Spark.internalServerError((req, res) -> new JSONObject()
+                .put("success", false)
+                .put("error", "Internal server error"));
         Spark.awaitInitialization();
         while (true) {
             try {
