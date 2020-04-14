@@ -42,7 +42,7 @@ public class NamespaceController {
         JSONObject body = new JSONObject(req.body());
         Namespace namespace = new Namespace();
         namespace.setId(UUID.randomUUID().toString());
-        namespace.setName(body.getString("name"));
+        namespace.setSlug(body.getString("slug"));
         NamespaceStore.persist(namespace);
         res.status(200);
         return new JSONObject()
@@ -52,16 +52,16 @@ public class NamespaceController {
     public static Route update = (req, res) -> {
         JSONObject body = new JSONObject(req.body());
         Namespace namespace = NamespaceStore.getOne(UUID.fromString(req.params("id")));
-
         if (namespace == null) {
             res.status(404);
             return new JSONObject()
                     .put("success", false)
                     .put("error", "Namespace not Found");
         }
-        if (body.has("name")) {
+        if (body.has("slug"))
+            namespace.setSlug(body.getString("slug"));
+        if (body.has("name"))
             namespace.setName(body.getString("name"));
-        }
         NamespaceStore.persist(namespace);
         res.status(200);
         return new JSONObject()

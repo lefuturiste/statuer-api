@@ -60,7 +60,7 @@ public class DiscordCommandsController {
             return;
         }
         String[] pathDecomposed = commandComponents[1].split("\\.");
-        Namespace namespace = NamespaceStore.getOneByName(pathDecomposed[0]);
+        Namespace namespace = NamespaceStore.getOneBySlug(pathDecomposed[0]);
         if (namespace == null) {
             DiscordBot.warn(event.getChannel(), "Invalid path: namespace not found");
             return;
@@ -68,7 +68,7 @@ public class DiscordCommandsController {
         EmbedBuilder builder = new EmbedBuilder();
         Project project = null;
         if (pathDecomposed.length >= 2)
-            project = ProjectStore.getOneByNameAndByNamespace(pathDecomposed[1], namespace);
+            project = ProjectStore.getOneBySlugAndByNamespace(pathDecomposed[1], namespace);
         if (project == null && pathDecomposed.length >= 2) {
             DiscordBot.warn(event.getChannel(), "Invalid path: project not found");
             return;
@@ -90,20 +90,21 @@ public class DiscordCommandsController {
                 break;
             case 2: // search for a project
                 assert project != null;
-                builder.setTitle(project.getPath())
+                builder.setTitle(project.getName())
                         .setDescription("A Statuer's project")
                         .setColor(Color.decode("#e74c3c"))
                         .setThumbnail(project.getImageUrl())
-                        .addField("#uuid", project.getId(), false)
+                        .addField("#uuid", project.getId(), true)
+                        .addField("Path", project.getPath(), true)
                         .addField("Services count", String.valueOf(project.getServices().size()), true)
                         .addField("Services", String.join(", ",
                                 project.getServices().stream()
-                                        .map(Service::getName)
+                                        .map(Service::getSlug)
                                         .collect(Collectors.joining(", "))),
                                 true);
                 break;
             case 3: // search for a service
-                Service service = ServiceStore.getOneByNameAndByProject(pathDecomposed[2], project);
+                Service service = ServiceStore.getOneBySlugAndByProject(pathDecomposed[2], project);
                 if (service == null) {
                     DiscordBot.warn(event.getChannel(), "Invalid path: service not found");
                     return;
@@ -145,30 +146,30 @@ public class DiscordCommandsController {
             // create that namespace
             namespace = new Namespace();
             namespace.setId(UUID.randomUUID().toString());
-            namespace.setName(objectQueryResult.namespaceName);
+            namespace.setSlug(objectQueryResult.namespaceSlug);
             NamespaceStore.persist(namespace);
             createdCount++;
         } else {
             namespace = objectQueryResult.namespace;
         }
-        if (objectQueryResult.projectName != null) {
+        if (objectQueryResult.projectSlug != null) {
             Project project;
             if (objectQueryResult.project == null) {
                 project = new Project();
                 project.setId(UUID.randomUUID().toString());
-                project.setName(objectQueryResult.projectName);
+                project.setSlug(objectQueryResult.projectSlug);
                 project.setNamespace(namespace);
                 ProjectStore.persist(project);
                 createdCount++;
             } else {
                 project = objectQueryResult.project;
             }
-            if (objectQueryResult.serviceName != null) {
+            if (objectQueryResult.serviceSlug != null) {
                 Service service;
                 if (objectQueryResult.service == null) {
                     service = new Service();
                     service.setId(UUID.randomUUID().toString());
-                    service.setName(objectQueryResult.serviceName);
+                    service.setSlug(objectQueryResult.serviceSlug);
                     service.setProject(project);
                     ServiceStore.persist(service);
                     createdCount++;
@@ -196,8 +197,8 @@ public class DiscordCommandsController {
         }
         if (objectQueryResult.service != null) {
             // edit service
-            if (parameters.containsKey("name")) {
-                objectQueryResult.service.setName(parameters.get("name"));
+            if (parameters.containsKey("slug")) {
+                objectQueryResult.service.setSlug(parameters.get("slug"));
             }
             if (parameters.containsKey("check_period") || parameters.containsKey("period")) {
                 String rawPeriod = parameters.containsKey("check_period") ? parameters.get("check_period") : parameters.get("period");
@@ -219,24 +220,23 @@ public class DiscordCommandsController {
             ServiceStore.persist(objectQueryResult.service);
         } else if (objectQueryResult.project != null) {
             // edit project
-            if (parameters.containsKey("name")) {
+            if (parameters.containsKey("slug"))
+                objectQueryResult.project.setSlug(parameters.get("slug"));
+            if (parameters.containsKey("name"))
                 objectQueryResult.project.setName(parameters.get("name"));
-            }
-            if (parameters.containsKey("imageUrl")) {
+            if (parameters.containsKey("imageUrl"))
                 objectQueryResult.project.setImageUrl(parameters.get("imageUrl"));
-            }
             ProjectStore.persist(objectQueryResult.project);
         } else if (objectQueryResult.namespace != null) {
             // edit namespace
-            if (parameters.containsKey("name")) {
+            if (parameters.containsKey("slug"))
+                objectQueryResult.namespace.setSlug(parameters.get("slug"));
+            if (parameters.containsKey("name"))
                 objectQueryResult.namespace.setName(parameters.get("name"));
-            }
-            if (parameters.containsKey("discordWebhook")) {
+            if (parameters.containsKey("discordWebhook"))
                 objectQueryResult.namespace.setDiscordWebhook(parameters.get("discordWebhook"));
-            }
-            if (parameters.containsKey("imageUrl")) {
+            if (parameters.containsKey("imageUrl"))
                 objectQueryResult.namespace.setImageUrl(parameters.get("imageUrl"));
-            }
             NamespaceStore.persist(objectQueryResult.namespace);
         } else {
             DiscordBot.warn(event.getChannel(), "Invalid path: entity not found");
@@ -252,14 +252,14 @@ public class DiscordCommandsController {
             return;
         }
         String[] pathDecomposed = commandComponents[1].split("\\.");
-        Namespace namespace = NamespaceStore.getOneByName(pathDecomposed[0]);
+        Namespace namespace = NamespaceStore.getOneBySlug(pathDecomposed[0]);
         if (namespace == null) {
             DiscordBot.warn(event.getChannel(), "Invalid path: namespace not found");
             return;
         }
         Project project = null;
         if (pathDecomposed.length >= 2)
-            project = ProjectStore.getOneByNameAndByNamespace(pathDecomposed[1], namespace);
+            project = ProjectStore.getOneBySlugAndByNamespace(pathDecomposed[1], namespace);
         if (project == null && pathDecomposed.length >= 2) {
             DiscordBot.warn(event.getChannel(), "Invalid path: project not found");
             return;
@@ -273,7 +273,7 @@ public class DiscordCommandsController {
                 deletedCount = ProjectStore.delete(project);
                 break;
             case 3:
-                Service service = ServiceStore.getOneByNameAndByProject(pathDecomposed[2], project);
+                Service service = ServiceStore.getOneBySlugAndByProject(pathDecomposed[2], project);
                 if (service == null) {
                     DiscordBot.warn(event.getChannel(), "Invalid path: service not found");
                     return;

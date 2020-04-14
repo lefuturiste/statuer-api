@@ -6,12 +6,24 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
+/**
+ * The incident entity represent a period where a service was down.
+ * It is defined with the duration of the down time and the service affected
+ * In the future, a incident will be able to regroup many services instead of one
+ */
 @Entity(name = "Incident")
 public class Incident {
 
+    /**
+     * A UUID for the namespace
+     */
     @Id
+    @NotNull
     private String id;
 
+    /**
+     * A name to describe the incident eg. "CloudFlare maintenance"
+     */
     private String name;
 
     private String description;

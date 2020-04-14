@@ -31,13 +31,13 @@ public class ServiceStore extends Store {
         }
     }
 
-    public static Service getOneByNameAndByProject(String name, Project project) {
+    public static Service getOneBySlugAndByProject(String slug, Project project) {
         EntityManager entitymanager = getEntityManager();
         try {
             CriteriaBuilder builder = entitymanager.getCriteriaBuilder();
             CriteriaQuery<Service> query = builder.createQuery(Service.class);
             Root<Service> service = query.from(Service.class);
-            query.where(builder.equal(service.get("name"), name), builder.equal(service.get("project"), project));
+            query.where(builder.equal(service.get("slug"), slug), builder.equal(service.get("project"), project));
 
             return entitymanager.createQuery(query.select(service)).getSingleResult();
         } catch (NoResultException e) {

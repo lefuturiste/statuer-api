@@ -10,32 +10,55 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The entity service represent most of the time a server like an HTTP server, a Database or all others kinds of sockets
+ */
 @Entity(name = "Service")
 public class Service {
 
+    /**
+     * A UUID for the project
+     */
     @Id
     @NotNull
     private String id;
 
+    /**
+     * The usable slug of the service eg. api, database or frontend
+     * This slug is used to identify a service
+     */
     @NotNull
     @NotEmpty
-    private String name;
+    private String slug;
 
     @URL
     private String discordWebhook;
 
     private String status;
 
-    private Integer checkPeriod = 120; // in seconds (60,120,180,240,300,420,600,900,1800,3600)
+    /**
+     * The period of the check, the more this number goes up the less often the service is check
+     * The number represent the period in seconds (60,120,180,240,300,420,600,900,1800,3600)
+     */
+    private Integer checkPeriod = 120;
 
     private Integer httpExpectedStatus = 200; // 200|400
 
+    /**
+     * The uri where the check thread will check if weather or not the service is up
+     */
     @URL
     private String url;
 
-    private String type; // http/socket
+    /**
+     * The type of checker which will be used eg. http, ping, mysql etc...
+     */
+    private String type;
 
-    private int timeout; // in seconds
+    /**
+     * The network timeout to specify when the checker will give up and set the service as down
+     */
+    private int timeout;
 
     private Instant lastCheckAt;
 
@@ -60,12 +83,12 @@ public class Service {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getSlug() {
+        return slug;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public Project getProject() {
@@ -79,7 +102,7 @@ public class Service {
     public JSONObject toJSONObject(int deep) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", id);
-        jsonObject.put("name", name);
+        jsonObject.put("slug", slug);
         jsonObject.put("url", url);
         jsonObject.put("type", type);
         jsonObject.put("is_available", getAvailable());
@@ -170,7 +193,7 @@ public class Service {
     }
 
     public String getPath() {
-        return getProject().getNamespace().getName() + "." + getProject().getName() + "." + this.name;
+        return getProject().getPath() + "." + this.slug;
     }
 
     public Instant getLastDownAt() {

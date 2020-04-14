@@ -32,10 +32,10 @@ public class QueryController {
                     .put("success", false)
                     .put("error", "Namespace not Found");
         }
-        if (objectQueryResult.projectName == null && objectQueryResult.serviceName == null) {
+        if (objectQueryResult.projectSlug == null && objectQueryResult.serviceSlug == null) {
             data.put("namespace", objectQueryResult.namespace.toJSONObject(1));
             data.put("type", "namespace");
-        } else if (objectQueryResult.serviceName == null) {
+        } else if (objectQueryResult.serviceSlug == null) {
             if (objectQueryResult.project == null) {
                 res.status(404);
                 return new JSONObject()
@@ -77,30 +77,30 @@ public class QueryController {
             // create that namespace
             namespace = new Namespace();
             namespace.setId(UUID.randomUUID().toString());
-            namespace.setName(objectQueryResult.namespaceName);
+            namespace.setSlug(objectQueryResult.namespaceSlug);
             NamespaceStore.persist(namespace);
             created.put("namespace", namespace.toJSONObject(0));
         } else {
             namespace = objectQueryResult.namespace;
         }
-        if (objectQueryResult.projectName != null) {
+        if (objectQueryResult.projectSlug != null) {
             Project project;
             if (objectQueryResult.project == null) {
                 project = new Project();
                 project.setId(UUID.randomUUID().toString());
-                project.setName(objectQueryResult.projectName);
+                project.setSlug(objectQueryResult.projectSlug);
                 project.setNamespace(namespace);
                 ProjectStore.persist(project);
                 created.put("project", project.toJSONObject(0));
             } else {
                 project = objectQueryResult.project;
             }
-            if (objectQueryResult.serviceName != null) {
+            if (objectQueryResult.serviceSlug != null) {
                 Service service;
                 if (objectQueryResult.service == null) {
                     service = new Service();
                     service.setId(UUID.randomUUID().toString());
-                    service.setName(objectQueryResult.serviceName);
+                    service.setSlug(objectQueryResult.serviceSlug);
                     service.setProject(project);
                     ServiceStore.persist(service);
                     created.put("service", service.toJSONObject(1));
@@ -129,8 +129,8 @@ public class QueryController {
 
         if (objectQueryResult.service != null) {
             // update service
-            if (body.has("name")) {
-                objectQueryResult.service.setName(body.getString("name"));
+            if (body.has("slug")) {
+                objectQueryResult.service.setSlug(body.getString("slug"));
             }
             if (body.has("type")) {
                 objectQueryResult.service.setType(body.getString("type"));
@@ -158,7 +158,7 @@ public class QueryController {
             ServiceStore.persist(objectQueryResult.service);
             App.notifyUpdateOnService();
         } else {
-            if (objectQueryResult.serviceName != null) {
+            if (objectQueryResult.serviceSlug != null) {
                 res.status(404);
                 return new JSONObject()
                         .put("success", false)
@@ -184,7 +184,7 @@ public class QueryController {
                 ProjectStore.persist(objectQueryResult.project);
                 App.notifyUpdateOnService();
             } else {
-                if (objectQueryResult.projectName != null) {
+                if (objectQueryResult.projectSlug != null) {
                     res.status(404);
                     return new JSONObject()
                             .put("success", false)
@@ -237,7 +237,7 @@ public class QueryController {
             // just delete the service
             ServiceStore.delete(objectQueryResult.service);
         } else {
-            if (objectQueryResult.serviceName != null) {
+            if (objectQueryResult.serviceSlug != null) {
                 res.status(404);
                 return new JSONObject()
                         .put("success", false)
@@ -246,7 +246,7 @@ public class QueryController {
             if (objectQueryResult.project != null) {
                 ProjectStore.delete(objectQueryResult.project);
             } else {
-                if (objectQueryResult.projectName != null) {
+                if (objectQueryResult.projectSlug != null) {
                     res.status(404);
                     return new JSONObject()
                             .put("success", false)

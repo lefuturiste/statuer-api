@@ -45,7 +45,7 @@ public class ServiceController {
         JSONObject body = new JSONObject(req.body());
         Service service = new Service();
         service.setId(UUID.randomUUID().toString());
-        service.setName(body.getString("name"));
+        service.setSlug(body.getString("slug"));
         service.setUrl(body.getString("url"));
         if (body.has("type")) {
             service.setType(body.getString("type"));
@@ -91,9 +91,8 @@ public class ServiceController {
                     .put("success", false)
                     .put("error", "Service not Found");
         }
-        if (body.has("name")) {
-            service.setName(body.getString("name"));
-        }
+        if (body.has("slug"))
+            service.setSlug(body.getString("slug"));
         ServiceStore.persist(service);
         res.status(200);
         return new JSONObject()

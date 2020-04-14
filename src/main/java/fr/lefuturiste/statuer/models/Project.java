@@ -10,24 +10,50 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The project entity represent a group of service
+ */
 @Entity(name = "Project")
 public class Project {
 
+    /**
+     * A UUID for the project
+     */
     @Id
+    @NotNull
     private String id;
 
+    /**
+     * The usable slug of the project eg. youtube or staileu
+     * This slug is used to identify a project
+     */
     @NotNull
     @NotEmpty
+    private String slug;
+
+    /**
+     * The full name of the project eg. YouTube or STAIL.EU Accounts
+     */
     private String name;
 
+    /**
+     * A url which reference to the logo of the project
+     */
+    @URL
     private String imageUrl;
 
     @URL
     private String discordWebhook;
 
+    /**
+     * The parent namespace of the project
+     */
     @ManyToOne
     private Namespace namespace;
 
+    /**
+     * All the services owned by the service
+     */
     @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
     private List<Service> services = new ArrayList<>();
 
@@ -37,6 +63,14 @@ public class Project {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public String getName() {
@@ -58,6 +92,7 @@ public class Project {
     public JSONObject toJSONObject(int deep) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", id);
+        jsonObject.put("slug", slug);
         jsonObject.put("name", name);
         jsonObject.put("discord_webhook", discordWebhook);
         JSONArray servicesJson = new JSONArray();
@@ -92,6 +127,6 @@ public class Project {
     }
 
     public String getPath() {
-        return this.getNamespace().getName() + "." + this.name;
+        return this.getNamespace().getSlug() + "." + this.slug;
     }
 }

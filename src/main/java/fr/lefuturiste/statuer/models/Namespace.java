@@ -1,24 +1,52 @@
 package fr.lefuturiste.statuer.models;
 
+import org.hibernate.validator.constraints.URL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The namespace entity represent a organization, a corporation eg. Github, Google or ONU
+ */
 @Entity(name = "Namespace")
 public class Namespace {
 
+    /**
+     * A UUID for the namespace
+     */
     @Id
+    @NotNull
     private String id;
 
+    /**
+     * The usable slug of the namespace eg. stc or google
+     */
+    @NotNull
+    @NotEmpty
+    private String slug;
+
+    /**
+     * The full name of the namespace eg. STAN-TAb Corp. or Google Inc.
+     */
     private String name;
 
+    /**
+     * A url which reference to the logo of the namespace
+     */
+    @URL
     private String imageUrl;
 
+    @URL
     private String discordWebhook;
 
+    /**
+     * All the projects of the namespace
+     */
     @OneToMany(mappedBy = "namespace", cascade = CascadeType.REMOVE)
     private List<Project> projects = new ArrayList<>();
 
@@ -38,6 +66,14 @@ public class Namespace {
         this.name = name;
     }
 
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
     public List<Project> getProjects() {
         return projects;
     }
@@ -49,6 +85,7 @@ public class Namespace {
     public JSONObject toJSONObject(int deep) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", id);
+        jsonObject.put("slug", name);
         jsonObject.put("name", name);
         JSONArray projectsJson = new JSONArray();
         for (Project project : getProjects()) {

@@ -28,7 +28,6 @@ public class ProjectController {
 
     public static Route getOne = (req, res) -> {
         Project project = ProjectStore.getOne(UUID.fromString(req.params("id")));
-
         if (project == null) {
             res.status(404);
             return new JSONObject()
@@ -45,10 +44,11 @@ public class ProjectController {
         JSONObject body = new JSONObject(req.body());
         Project project = new Project();
         project.setId(UUID.randomUUID().toString());
-        project.setName(body.getString("name"));
-        if (body.has("discord_webhook")) {
-            project.setName(body.getString("discord_webhook"));
-        }
+        project.setSlug(body.getString("slug"));
+        if (body.has("name"))
+            project.setName(body.getString("name"));
+        if (body.has("discord_webhook"))
+            project.setDiscordWebhook(body.getString("discord_webhook"));
         Namespace namespace = NamespaceStore.getOne(UUID.fromString(body.getString("namespace_id")));
         if (namespace == null) {
             res.status(404);
@@ -80,9 +80,12 @@ public class ProjectController {
                     .put("success", false)
                     .put("error", "Project not Found");
         }
-        if (body.has("name")) {
+        if (body.has("name"))
             project.setName(body.getString("name"));
-        }
+        if (body.has("slug"))
+            project.setSlug(body.getString("slug"));
+        if (body.has("discord_webhook"))
+            project.setDiscordWebhook(body.getString("discord_webhook"));
         ProjectStore.persist(project);
         res.status(200);
         return new JSONObject()

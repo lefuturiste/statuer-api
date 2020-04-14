@@ -29,12 +29,12 @@ public class ProjectStore extends Store {
         }
     }
 
-    public static Project getOneByNameAndByNamespace(String name, Namespace namespace) {
+    public static Project getOneBySlugAndByNamespace(String slug, Namespace namespace) {
         EntityManager entitymanager = getEntityManager();
         try {
             return entitymanager
-                    .createQuery("from Project where name = :name and namespace = :namespace", Project.class)
-                    .setParameter("name", name)
+                    .createQuery("from Project where slug = :slug and namespace = :namespace", Project.class)
+                    .setParameter("slug", slug)
                     .setParameter("namespace", namespace)
                     .getSingleResult();
         } catch (NoResultException e) {

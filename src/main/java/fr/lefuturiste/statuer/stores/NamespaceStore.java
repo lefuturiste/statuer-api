@@ -28,12 +28,12 @@ public class NamespaceStore extends Store {
         }
     }
 
-    public static Namespace getOneByName(String name) {
+    public static Namespace getOneBySlug(String slug) {
         EntityManager entitymanager = getEntityManager();
         try {
             return entitymanager
-                    .createQuery("from Namespace where name = :name", Namespace.class)
-                    .setParameter("name", name)
+                    .createQuery("from Namespace where slug = :slug", Namespace.class)
+                    .setParameter("slug", slug)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;
