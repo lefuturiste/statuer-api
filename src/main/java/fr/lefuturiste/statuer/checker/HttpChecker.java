@@ -22,9 +22,9 @@ public class HttpChecker implements CheckerInterface {
         int expectedStatus = service.getHttpExpectedStatus() == 0 ? 200 : service.getHttpExpectedStatus();
         try {
             response = httpClient.newCall(request).execute();
+            response.close();
             code = response.code();
         } catch (IOException ignored) {}
-
         return expectedStatus == code;
     }
 }
